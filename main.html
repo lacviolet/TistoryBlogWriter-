@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stripe 스타일 배경</title>
+  <style>
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    body {
+      background: #181c2a;
+    }
+    .background-art {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 0;
+    }
+    /* 여러 겹의 그라데이션 곡선 */
+    .bg-blur1, .bg-blur2, .bg-blur3 {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.7;
+      mix-blend-mode: lighten;
+      pointer-events: none;
+    }
+    .bg-blur1 {
+      width: 70vw; height: 70vw;
+      left: 40vw; top: -20vw;
+      background: radial-gradient(circle at 60% 40%, #ffe478 0%, #ff7eb3 80%, transparent 100%);
+      animation: move-blur1 18s ease-in-out infinite alternate;
+    }
+    .bg-blur2 {
+      width: 60vw; height: 60vw;
+      left: 10vw; top: 30vh;
+      background: radial-gradient(circle at 40% 60%, #635bff 0%, #7afcff 80%, transparent 100%);
+      opacity: 0.5;
+      animation: move-blur2 22s ease-in-out infinite alternate;
+    }
+    .bg-blur3 {
+      width: 50vw; height: 50vw;
+      left: 50vw; top: 50vh;
+      background: radial-gradient(circle at 60% 60%, #ff7eb3 0%, #ffe478 80%, transparent 100%);
+      opacity: 0.3;
+      animation: move-blur3 26s ease-in-out infinite alternate;
+    }
+    @keyframes move-blur1 {
+      from { transform: translate(0, 0) scale(1) rotate(0deg);}
+      to   { transform: translate(-40px, 60px) scale(1.08) rotate(8deg);}
+    }
+    @keyframes move-blur2 {
+      from { transform: translate(0, 0) scale(1) rotate(0deg);}
+      to   { transform: translate(60px, -40px) scale(1.12) rotate(-6deg);}
+    }
+    @keyframes move-blur3 {
+      from { transform: translate(0, 0) scale(1) rotate(0deg);}
+      to   { transform: translate(-30px, 40px) scale(1.05) rotate(12deg);}
+    }
+    /* 라인 텍스처 */
+    .bg-lines {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: repeating-linear-gradient(
+        120deg,
+        rgba(255,255,255,0.04) 0px,
+        rgba(255,255,255,0.04) 2px,
+        transparent 2px,
+        transparent 24px
+      );
+      mix-blend-mode: lighten;
+      opacity: 0.7;
+      animation: move-lines 30s linear infinite;
+      pointer-events: none;
+      z-index: 2;
+    }
+    @keyframes move-lines {
+      from { background-position: 0 0; }
+      to { background-position: 300px 300px; }
+    }
+    /* 메인 콘텐츠 */
+    .content {
+      position: relative;
+      z-index: 10;
+      color: white;
+      padding: 2rem;
+      max-width: 600px;
+      margin-left: 10vw;
+      margin-top: 18vh;
+    }
+    .content h1 {
+      font-size: 3.2rem;
+      margin-bottom: 1.2rem;
+      line-height: 1.1;
+    }
+    .content h1 span {
+      background: linear-gradient(90deg, #ff7eb3 30%, #ffe478 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .content p {
+      font-size: 1.25rem;
+      margin-bottom: 2.2rem;
+      color: #e0e0e0;
+    }
+    .content button {
+      padding: 0.9rem 1.7rem;
+      font-size: 1.1rem;
+      background: #635bff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 16px 0 rgba(99,91,255,0.15);
+      transition: background 0.2s;
+    }
+    .content button:hover {
+      background: #7a6fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-art">
+    <div class="bg-blur1"></div>
+    <div class="bg-blur2"></div>
+    <div class="bg-blur3"></div>
+    <canvas class="wave-canvas"></canvas>
+  </div>
+  <div class="content">
+    <h1>Build the next era of your <span>enterprise</span></h1>
+    <p>Leading enterprises use Stripe to revolutionize their business.</p>
+    <button>Contact sales</button>
+  </div>
+  <script>
+    // 캔버스 크기 자동 조정
+    const canvas = document.querySelector('.wave-canvas');
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // 컬러 그라데이션 배열
+    const gradients = [
+      ['#ffe478', '#ff7eb3', '#635bff'],
+      ['#7afcff', '#635bff'],
+      ['#ff7eb3', '#ffe478', '#7afcff']
+    ];
+
+    // 라인 파라미터 (총 18개)
+    const lines = [
+      { amp: 60, freq: 2, speed: 0.7, offset: 0.55, width: 2, grad: 0 },
+      { amp: 90, freq: 1.2, speed: 0.5, offset: 0.7, width: 2, grad: 1 },
+      { amp: 40, freq: 2.5, speed: 1.1, offset: 0.35, width: 1.5, grad: 2 },
+      { amp: 70, freq: 1.7, speed: 0.9, offset: 0.45, width: 1.2, grad: 0 },
+      { amp: 55, freq: 2.8, speed: 0.6, offset: 0.62, width: 1.1, grad: 1 },
+      { amp: 80, freq: 1.4, speed: 0.8, offset: 0.60, width: 1.7, grad: 2 },
+      { amp: 35, freq: 3.2, speed: 1.3, offset: 0.38, width: 1, grad: 0 },
+      { amp: 100, freq: 1.1, speed: 0.4, offset: 0.75, width: 2.2, grad: 1 },
+      // 추가된 10개
+      { amp: 50, freq: 2.3, speed: 0.65, offset: 0.5, width: 1.3, grad: 2 },
+      { amp: 85, freq: 1.5, speed: 0.55, offset: 0.68, width: 1.8, grad: 0 },
+      { amp: 45, freq: 2.9, speed: 1.05, offset: 0.33, width: 1.2, grad: 1 },
+      { amp: 75, freq: 1.8, speed: 0.95, offset: 0.48, width: 1.4, grad: 2 },
+      { amp: 65, freq: 2.6, speed: 0.75, offset: 0.58, width: 1.5, grad: 0 },
+      { amp: 95, freq: 1.3, speed: 0.45, offset: 0.72, width: 2, grad: 1 },
+      { amp: 38, freq: 3.4, speed: 1.25, offset: 0.36, width: 1, grad: 2 },
+      { amp: 110, freq: 1.0, speed: 0.35, offset: 0.78, width: 2.3, grad: 0 },
+      { amp: 58, freq: 2.1, speed: 0.85, offset: 0.53, width: 1.1, grad: 1 },
+      { amp: 82, freq: 1.6, speed: 0.6, offset: 0.66, width: 1.6, grad: 2 }
+    ];
+
+    function lerpColor(a, b, t) {
+      // a, b: "ffe478" 등 6자리 hex, t: 0~1
+      const ac = a.match(/\w\w/g).map(x => parseInt(x, 16));
+      const bc = b.match(/\w\w/g).map(x => parseInt(x, 16));
+      return `rgba(${ac.map((v,i)=>Math.round(v+(bc[i]-v)*t)).join(',')}`;
+    }
+
+    function draw() {
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      const t = Date.now() / 1000;
+      lines.forEach((line, idx) => {
+        ctx.lineWidth = line.width;
+        const gradColors = gradients[line.grad];
+        let prev = null;
+        for (let x = 0; x <= w; x += 4) {
+          const phase = t * line.speed + idx;
+          const y = Math.sin((x / w) * line.freq * Math.PI * 2 + phase) * line.amp
+                  + Math.cos((x / w) * (line.freq/2) * Math.PI * 2 + phase * 0.7) * (line.amp/2)
+                  + h * line.offset;
+          if (prev) {
+            const alpha = x / w; // 왼쪽 0, 오른쪽 1
+            // 그라데이션 색상 보간
+            const colorIdx = Math.floor(alpha * (gradColors.length - 1));
+            const colorStart = gradColors[colorIdx].replace('#','');
+            const colorEnd = (gradColors[colorIdx + 1] || gradColors[colorIdx]).replace('#','');
+            const color = lerpColor(colorStart, colorEnd, (alpha * (gradColors.length - 1)) % 1);
+            ctx.strokeStyle = `rgba(${color.split('(')[1]},${alpha})`;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+          }
+          prev = {x, y};
+        }
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
+</body>
+</html>
